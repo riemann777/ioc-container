@@ -1,0 +1,3 @@
+./dist/**/*.spec.js
+--timeout 5000
+--slow 3000

@@ -1,0 +1,25 @@
+{
+  "name": "ioc-container",
+  "version": "0.0.0",
+  "description": "simple ioc container to enable dependency injecttion via es6/ts decorators",
+  "main": "dist/index",
+  "scripts": {
+    "test": "npm run tsc && mocha",
+    "tsc": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.0.6",
+    "@types/mocha": "^2.2.44",
+    "@types/node": "^8.0.53",
+    "@types/sinon": "^4.0.0",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "sinon": "^4.1.2",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.10"
+  }
+}
