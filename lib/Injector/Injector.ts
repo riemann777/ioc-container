@@ -1,13 +1,13 @@
 // import {InjectAnnotation, ProvideAnnotation} from "../Annotations/Annotations";
 import {readAnnotations} from "../Annotations/Annotations";
-import {ProviderFactory} from "../Provider/Provider";
+import {ClassProvider, ProviderFactory} from "../Provider/Provider";
 
 
 export class Injector {
 
-    private providers: Map<Function, any> = new Map();
-    private cache: Map<Function, Function> = new Map();
-    private resolving: Function[] = [];
+    private providers: Map<new() => ClassProvider, ClassProvider> = new Map();
+    private cache: Map<new(...args) => any, any> = new Map();
+    private resolving: Array<new(...args) => any> = [];
     public static providerFactory: ProviderFactory = new ProviderFactory();
 
     constructor(modules: Array<any> = []) {
@@ -16,7 +16,7 @@ export class Injector {
 
     }
 
-    public get(ctor) {//<T>(ctor: new () => T): T {
+    public get<T>(ctor: new(...args) => T): T {
 
         if (!this.isVaild(ctor)) {
 
@@ -35,11 +35,13 @@ export class Injector {
 
         this.resolving.push(ctor);
 
-        const dependencies = readAnnotations(ctor).params,
-            provider = Injector.providerFactory.create(ctor, dependencies),
-            args = provider.params.map((param: any) => {
+        const dependencies: Array<Function> = readAnnotations(ctor).params,
+            provider: ClassProvider = Injector.providerFactory.create(ctor, dependencies),
+            args: any[] = provider.params.map(<K>(param: any) => {
 
-                return this.get(param.token);
+                const dependecnyCtor: new(...args) => K = param.token;
+
+                return this.get<K>(dependecnyCtor);
             }),
             instance = provider.create(args);//this.createWithDependencies(ctor, args);
 
@@ -53,25 +55,25 @@ export class Injector {
 
             // const dependencies = readAnnotations(ctor).params,
             //     provider = Injector.providerFactory.create(ctor, dependencies);
-
-        //     this.providers.set(ctor, provider);
+            //
+            // this.providers.set(ctor, provider);
         // }
 
-        // const args = this.providers.get(ctor)
+        // const args = provider.params.map((param: any) => {
         //
-        //     return this.get(param.token);
-        // });
-
-        // const instance = this.createWithDependencies(ctor, args);
+        //         return this.get(param.token);
+        //
+        //     }),
+        //     instance: T = this.createWithDependencies(ctor, args);
 
         // // work out when condition is met?
         // if (!hasAnnotation(ctor, TransientScopeAnnotation)) {
         //
-        //     this._cache.set(ctor, instance);
+        //     this.cache.set(ctor, instance);
         // }
 
         // this.resolving.pop();
-
+        //
         // return instance;
     }
 
@@ -102,16 +104,16 @@ export class Injector {
 
     }
 
-    // private createWithDependencies(token, args) {
-    //
-    //     const provider = this.providers.get(token);
-    //
-    //     return provider.create(args);
+    // private createWithDependencies(token, args): T {
 
-        // let instance,
+        // let provider = this.providers.get(token);
+        //
+        // return provider.create(args);
+
+        // let instance: T,
         //     provider = this.providers.get(token);
         //
-        //     try {
+        // try {
         //
         //     instance = provider.create(args);
         //
@@ -125,7 +127,7 @@ export class Injector {
         //     throw error;
         // }
         //
-        // return instance;
+        // return <T>instance;
 
     // }
 

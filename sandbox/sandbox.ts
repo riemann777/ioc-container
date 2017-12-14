@@ -51,6 +51,31 @@ class Test {
 
 let injector = new Injector([]);
 
-let test = injector.get(Test);
+let testing: Test = injector.get(Test);
 
-test.hello();
+testing.hello();
+
+// class DepA {}
+//
+// class Factory {
+//
+//     public create<A>(ctor: new(dependency) => A, dep: DepA): A {
+//
+//         return new ctor(dep);
+//     }
+// }
+//
+//
+// class Car {
+//
+//
+//     constructor(private depA: DepA) {
+//
+//     }
+// }
+//
+// let factory = new Factory();
+//
+// let car: Car = factory.create(Car, new DepA());
+//
+// console.log(car instanceof Car);

@@ -2,7 +2,7 @@
   "name": "ioc-container",
   "version": "0.0.0",
   "description": "simple ioc container to enable dependency injecttion via es6/ts decorators",
-  "main": "dist/index",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "npm run tsc && mocha",
     "tsc": "tsc"
