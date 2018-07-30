@@ -9,6 +9,8 @@ export class InjectAnnotation {
 
 }
 
+export class TransientScope {}
+
 export function injectAnnotationFactory(args: Array<any>) : InjectAnnotation {
 
     function F() {
@@ -68,23 +70,23 @@ export function readAnnotations(fn) {
 
 }
 
-// function hasAnnotation(fn, annotationClass) {
-//
-//     if (!fn.annotations || fn.annotations.length === 0) {
-//
-//         return false;
-//     }
-//
-//     for (var annotation of fn.annotations) {
-//
-//         if (annotation instanceof annotationClass) {
-//
-//             return true;
-//         }
-//     }
-//
-//     return false;
-// }
+export function hasAnnotation(fn, annotationClass) {
+
+    if (!fn.annotations || fn.annotations.length === 0) {
+
+        return false;
+    }
+
+    for (var annotation of fn.annotations) {
+
+        if (annotation instanceof annotationClass) {
+
+            return true;
+        }
+    }
+
+    return false;
+}
 
 
 // Read annotations on a function or class and collect "interesting" metadata:

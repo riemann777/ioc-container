@@ -1,11 +1,11 @@
-import {Inject} from "../lib/Decorators/Decorators";
+import {Inject, Provide} from "../lib/Decorators/Decorators";
 import {Injector} from "../lib/Injector/Injector";
 
 class DepC {
 
     public getHelloMsg() {
 
-        return "hello"
+        return "hello";
     }
 }
 
@@ -23,6 +23,15 @@ class DepA {
         let message = this.depC.getHelloMsg();
 
         console.log(message);
+    }
+}
+
+@Provide(DepA)
+class DepAMock {
+
+    public sayHi() {
+
+        console.log("MOCK HI!")
     }
 }
 
@@ -49,7 +58,7 @@ class Test {
     }
 }
 
-let injector = new Injector([]);
+let injector = new Injector([DepAMock]);
 
 let testing: Test = injector.get(Test);
 

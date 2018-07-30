@@ -16,7 +16,7 @@ export class Injector {
 
     }
 
-    public get<T>(ctor: new(...args) => T): T {
+    public get<T>(ctor) {//: new(...args) => T): T {
 
         if (!this.isVaild(ctor)) {
 
@@ -33,17 +33,29 @@ export class Injector {
             return this.cache.get(ctor);
         }
 
+        if (this.shouldUseDefaultProvider(ctor)) {
+
+            const dependencies = readAnnotations(ctor).params,
+                provider = Injector.providerFactory.create(ctor, dependencies);
+
+            // console.log("PROVIDER: ", provider)
+            this.providers.set(ctor, provider);
+        }
+
         this.resolving.push(ctor);
 
-        const dependencies: Array<Function> = readAnnotations(ctor).params,
-            provider: ClassProvider = Injector.providerFactory.create(ctor, dependencies),
+        // const dependencies: Array<Function> = readAnnotations(ctor).params,
+        //     provider: ClassProvider = Injector.providerFactory.create(ctor, dependencies);
+        // console.log("provider", provider)
+        const provider = this.providers.get(ctor),
             args: any[] = provider.params.map(<K>(param: any) => {
 
                 const dependecnyCtor: new(...args) => K = param.token;
-
+                // console.log("DEP CTOR", dependecnyCtor)
                 return this.get<K>(dependecnyCtor);
-            }),
-            instance = provider.create(args);//this.createWithDependencies(ctor, args);
+            });
+        // console.log("ARGS INCORRECT: ", args);
+        const instance: T = provider.create(args);//this.createWithDependencies(ctor, args);
 
         this.cache.set(ctor, instance);
         this.resolving.pop();
@@ -75,6 +87,30 @@ export class Injector {
         // this.resolving.pop();
         //
         // return instance;
+    }
+
+    // private shouldUseDefaultProvider(token) {
+    //
+    //     return isFunction(token) && !this.hasProviderFor(token)
+    // }
+    private shouldUseDefaultProvider(token) {
+
+        return (typeof token === 'function') && !this.providers.has(token)
+    }
+
+    private hasProviderFor(token) {
+
+        if (this.providers.has(token)) {
+
+            return true;
+        }
+
+        // if (this._parent) {
+        //
+        //     return this._parent._hasProviderFor(token);
+        // }
+
+        return false;
     }
 
 
@@ -131,11 +167,6 @@ export class Injector {
 
     // }
 
-    private shouldUseDefaultProvider(token) {
-
-        return (typeof token === 'function') && !this.providers.has(token)
-    }
-
     private isVaild(token) {
 
         return !!token && token !== Injector;
@@ -167,11 +198,12 @@ export class Injector {
 }
 
 function getResolvingMessage(resolving, token) {
+
     // If a token is passed in, add it into the resolving array.
     // We need to check arguments.length because it can be null/undefined.
     if (arguments.length > 1) {
 
-        resolving.push(token);
+        resolving.push(token);//???
     }
 
     if (resolving.length > 1) {
@@ -180,20 +212,26 @@ function getResolvingMessage(resolving, token) {
     }
 
     return '';
+
 }
 
 function toString(token) {
+
     if (typeof token === 'string') {
+
         return token;
     }
 
     if (token === undefined || token === null) {
+
         return '' + token;
     }
 
     if (token.name) {
+
         return token.name;
     }
 
     return token.toString();
+
 }

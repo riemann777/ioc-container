@@ -32,21 +32,21 @@ export class ClassProvider {
     private createConstructor(currentConstructorIdx, context, allArguments) {
 
         let constructorInfo = this.constructors[currentConstructorIdx],
-            nextConstructorInfo = this.constructors[currentConstructorIdx + 1],
-            argsForCurrentConstructor;
-
-        if (nextConstructorInfo) {
-
-            argsForCurrentConstructor = allArguments
-                .slice(constructorInfo[1], nextConstructorInfo[1])
-                .concat([this.createConstructor(currentConstructorIdx + 1, context, allArguments)])
-                .concat(allArguments.slice(nextConstructorInfo[2] + 1, constructorInfo[2] + 1));
-
-        } else {
-
+            // nextConstructorInfo = this.constructors[currentConstructorIdx + 1],
             argsForCurrentConstructor = allArguments.slice(constructorInfo[1], constructorInfo[2] + 1);
 
-        }
+        // if (nextConstructorInfo) {
+        //
+        //     argsForCurrentConstructor = allArguments
+        //         .slice(constructorInfo[1], nextConstructorInfo[1])
+        //         .concat([this.createConstructor(currentConstructorIdx + 1, context, allArguments)])
+        //         .concat(allArguments.slice(nextConstructorInfo[2] + 1, constructorInfo[2] + 1));
+        //
+        // } else {
+
+            // argsForCurrentConstructor = allArguments.slice(constructorInfo[1], constructorInfo[2] + 1);
+
+        // }
 
         return function InjectedAndBoundSuperConstructor() {
 

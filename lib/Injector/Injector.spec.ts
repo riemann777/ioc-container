@@ -30,14 +30,43 @@ describe("Injector", () => {
 
             it("should load modules correctly", () => {
 
-                class ActualClass {}
+                class ActualClass {
+
+                    getThing() {
+
+                        return "actualThing";
+                    }
+                }
 
                 @Provide(ActualClass)
-                class MockClass {}
+                class MockClass {
+
+                    getThing() {
+
+                        return "mockThing";
+                    }
+                }
+
+                @Inject
+                class TestProvide {
+
+                    constructor(private depA: ActualClass) {
+
+                    }
+
+                    getThing() {
+
+                        return this.depA.getThing();
+                    }
+                }
 
                 injector = new Injector([MockClass]);
 
                 expect((<any>injector).providers.get(ActualClass)).to.be.instanceof(ClassProvider);
+
+
+                const testProvide = injector.get(TestProvide);
+                expect(testProvide.getThing()).to.equal("mockThing");
 
             });
 
